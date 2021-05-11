@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.pupu.temsetup.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.pupu.temsetup.MyBundle
 
 class MyApplicationService {
 
