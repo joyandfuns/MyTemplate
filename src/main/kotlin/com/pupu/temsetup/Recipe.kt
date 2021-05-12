@@ -1,4 +1,3 @@
-import android.util.Log
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.android.tools.idea.wizard.template.impl.activities.common.addAllKotlinDependencies
@@ -13,7 +12,9 @@ fun RecipeExecutor.mvvmSetup(
         moduleData: ModuleTemplateData,
         packageName: String,
         entityName: String,
-        layoutName: String
+        layoutName: String,
+        repositoryName: String,
+        requiredCreateRepository: Boolean
 ) {
     val (projectData) = moduleData
     val project = projectInstance ?: return
@@ -23,7 +24,6 @@ fun RecipeExecutor.mvvmSetup(
     val virtualFiles = ProjectRootManager.getInstance(project).contentSourceRoots
     val virtSrc = virtualFiles.first { it.path.contains("src") }
     val virtRes = virtualFiles.first { it.path.contains("res") }
-    Log.d("AAAAA", "project: " + project.basePath)
     val directorySrc = PsiManager.getInstance(project).findDirectory(virtSrc)!!
     val directoryRes = PsiManager.getInstance(project).findDirectory(virtRes)!!
 
@@ -33,8 +33,13 @@ fun RecipeExecutor.mvvmSetup(
     getFragment(packageName, entityName, projectData)
             .save(directorySrc, packageName, "${entityName}Fragment.kt")
 
-    getViewModel(packageName, entityName, projectData)
+    getViewModel(packageName, entityName, repositoryName, projectData)
             .save(directorySrc, packageName, "${entityName}ViewModel.kt")
+
+    if (requiredCreateRepository) {
+        getRepository(packageName, repositoryName)
+                .save(directorySrc, packageName, "${repositoryName}Repository.kt")
+    }
 
     getFragmentLayout(packageName, entityName)
             .save(directoryRes, "layout", "${layoutName}.xml")

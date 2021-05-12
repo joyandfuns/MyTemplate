@@ -1,6 +1,7 @@
 package com.pupu.temsetup
 
 import com.android.tools.idea.wizard.template.*
+import com.pupu.temsetup.listeners.MyProjectManagerListener
 import mvvmSetup
 
 val mvvmSetupTemplate
@@ -17,7 +18,7 @@ val mvvmSetupTemplate
 
         val packageNameParam = defaultPackageNameParameter
         val entityName = stringParameter {
-            name = "Entity Name"
+            name = "Entity Name (首字母大写)"
             default = "Sample"
             help = "The name of the entity class to create and use in Activity, Fragment, ViewModel"
             constraints = listOf(Constraint.NONEMPTY)
@@ -31,10 +32,34 @@ val mvvmSetupTemplate
             suggest = { fragmentToLayout(entityName.value.toLowerCase()) }
         }
 
+        val repositoryName = stringParameter {
+            name = "Repository Name (首字母大写)"
+            default = "Sample"
+            help = "The name of the Repository"
+            constraints = listOf(Constraint.NONEMPTY)
+            suggest = { entityName.value }
+        }
+
+        val requiredCreateRepository = booleanParameter {
+            name = "Create new repository"
+            default = false
+            help = "If create new repository"
+        }
+
+//        val projectName = stringParameter {
+//            name = "project"
+//            help = "The name of the Repository"
+//            constraints = listOf(Constraint.NONEMPTY)
+//            suggest = { MyProjectManagerListener.projectInstance?.basePath }
+//        }
+
         widgets(
                 TextFieldWidget(entityName),
                 TextFieldWidget(layoutName),
+                TextFieldWidget(repositoryName),
+                CheckBoxWidget(requiredCreateRepository),
                 PackageNameWidget(packageNameParam)
+//                TextFieldWidget(projectName)
         )
 
         recipe = { data: TemplateData ->
@@ -42,7 +67,9 @@ val mvvmSetupTemplate
                     data as ModuleTemplateData,
                     packageNameParam.value,
                     entityName.value,
-                    layoutName.value
+                    layoutName.value,
+                    repositoryName.value,
+                    requiredCreateRepository.value
             )
         }
     }

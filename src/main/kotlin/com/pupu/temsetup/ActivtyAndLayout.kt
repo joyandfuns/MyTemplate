@@ -72,13 +72,15 @@ class ${entityName}Fragment : PuPuFragment2<Fragment${entityName}Binding, ${enti
 fun getViewModel(
         packageName: String,
         entityName: String,
+        repositoryName: String,
         projectData: ProjectTemplateData
 ) = """package $packageName
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.pupumall.adkx.ext.observe
 import ${projectData.applicationPackage}.base.PuPuViewModel2
-import ${projectData.applicationPackage}.repository.${entityName}Repository
+import ${projectData.applicationPackage}.repository.${repositoryName}Repository
 
 /**
  * Created by wurf
@@ -86,7 +88,7 @@ import ${projectData.applicationPackage}.repository.${entityName}Repository
  * MVVM示例ViewModel
  */
 class ${entityName}ViewModel(
-        val repository: ${entityName}Repository,
+        val repository: ${repositoryName}Repository,
         private val handle: SavedStateHandle
 ) : PuPuViewModel2() {
     
@@ -106,6 +108,33 @@ class ${entityName}ViewModel(
                     sampleLiveData.value = 1
                 }
     }
+}"""
+
+fun getRepository(
+        packageName: String,
+        repositoryName: String
+) = """package $packageName
+
+import com.pupumall.adkx.base.BaseRepository
+import com.pupumall.adkx.http.model.PuPuResponse2
+import com.pupumall.adkx.http.model.State
+import com.pupumall.customer.configcenter.model.AppConfigData
+import com.pupumall.customer.http.ApiServiceKt
+import flowRequest
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * Created by wurf
+ * on 2021/5/12.
+ * MVVM示例-Repository
+ */
+class ${repositoryName}Repository(private val apiService: ApiServiceKt) : BaseRepository() {
+
+    /** 获取数据 */
+    fun fetchData(): Flow<State<PuPuResponse2<AppConfigData?>>> = flowRequest {
+        apiService.getAppConfig()
+    }
+    
 }"""
 
 fun getFragmentLayout(
