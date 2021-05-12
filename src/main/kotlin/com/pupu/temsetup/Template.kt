@@ -1,16 +1,15 @@
 package com.pupu.temsetup
 
 import com.android.tools.idea.wizard.template.*
-import java.io.File
-import mviSetup
+import mvvmSetup
 
-val mviSetupTemplate
+val mvvmSetupTemplate
     get() = template {
         revision = 2
-        name = "MY Setup with Activity"
-        description = "Creates a new activity along layout file."
-        minApi = 16
-        minBuildApi = 16
+        name = "pupu-mvvm-kit"
+        description = "Creates a new MVVM architecture page."
+        minApi = 21
+        minBuildApi = 21
         category = Category.Other // Check other categories
         formFactor = FormFactor.Mobile
         screens = listOf(WizardUiContext.FragmentGallery, WizardUiContext.MenuEntry,
@@ -19,17 +18,17 @@ val mviSetupTemplate
         val packageNameParam = defaultPackageNameParameter
         val entityName = stringParameter {
             name = "Entity Name"
-            default = "Wurst"
-            help = "The name of the entity class to create and use in Activity"
+            default = "Sample"
+            help = "The name of the entity class to create and use in Activity, Fragment, ViewModel"
             constraints = listOf(Constraint.NONEMPTY)
         }
 
         val layoutName = stringParameter {
             name = "Layout Name"
-            default = "my_act"
-            help = "The name of the layout to create for the activity"
+            default = "fragment_sample"
+            help = "The name of the layout to create for the fragment"
             constraints = listOf(Constraint.LAYOUT, Constraint.UNIQUE, Constraint.NONEMPTY)
-            suggest = { "${activityToLayout(entityName.value.toLowerCase())}s" }
+            suggest = { fragmentToLayout(entityName.value.toLowerCase()) }
         }
 
         widgets(
@@ -39,7 +38,7 @@ val mviSetupTemplate
         )
 
         recipe = { data: TemplateData ->
-            mviSetup(
+            mvvmSetup(
                     data as ModuleTemplateData,
                     packageNameParam.value,
                     entityName.value,
@@ -51,7 +50,7 @@ val mviSetupTemplate
 val defaultPackageNameParameter get() = stringParameter {
     name = "Package name"
     visible = { !isNewModule }
-    default = "com.mycompany.myapp"
+    default = "com.pupumall.customer"
     constraints = listOf(Constraint.PACKAGE)
     suggest = { packageName }
 }

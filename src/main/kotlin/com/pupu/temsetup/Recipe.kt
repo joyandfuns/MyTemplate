@@ -1,3 +1,4 @@
+import android.util.Log
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.android.tools.idea.wizard.template.impl.activities.common.addAllKotlinDependencies
@@ -8,9 +9,7 @@ import com.intellij.psi.PsiManager
 import com.pupu.temsetup.listeners.MyProjectManagerListener.Companion.projectInstance
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-import someActivity
-import someActivityLayout
-fun RecipeExecutor.mviSetup(
+fun RecipeExecutor.mvvmSetup(
         moduleData: ModuleTemplateData,
         packageName: String,
         entityName: String,
@@ -24,13 +23,20 @@ fun RecipeExecutor.mviSetup(
     val virtualFiles = ProjectRootManager.getInstance(project).contentSourceRoots
     val virtSrc = virtualFiles.first { it.path.contains("src") }
     val virtRes = virtualFiles.first { it.path.contains("res") }
+    Log.d("AAAAA", "project: " + project.basePath)
     val directorySrc = PsiManager.getInstance(project).findDirectory(virtSrc)!!
     val directoryRes = PsiManager.getInstance(project).findDirectory(virtRes)!!
 
-    someActivity(packageName, entityName, layoutName, projectData)
-            .save(directorySrc, packageName, "${entityName}sActivity.kt")
+    getActivity(packageName, entityName)
+            .save(directorySrc, packageName, "${entityName}Activity.kt")
 
-    someActivityLayout(packageName, entityName)
+    getFragment(packageName, entityName, projectData)
+            .save(directorySrc, packageName, "${entityName}Fragment.kt")
+
+    getViewModel(packageName, entityName, projectData)
+            .save(directorySrc, packageName, "${entityName}ViewModel.kt")
+
+    getFragmentLayout(packageName, entityName)
             .save(directoryRes, "layout", "${layoutName}.xml")
 }
 
